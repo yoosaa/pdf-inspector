@@ -1,0 +1,15 @@
+{
+  "name": "pdf-inspector",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "dev:web": "pnpm --filter web dev",
+    "dev:api": "cd apps/pdf-api && uvicorn main:app --reload --port 8000"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.31.0"
+}
