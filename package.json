@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "dev:web": "pnpm --filter web dev",
-    "dev:api": "cd apps/pdf-api && uvicorn main:app --reload --port 8000"
+    "dev:api": "cd apps/pdf-api && .venv/bin/uvicorn main:app --reload --port 8000"
   },
   "keywords": [],
   "author": "",
