@@ -3,4 +3,4 @@ apps/pdf-api/.venv/
 *.pyc
 
 .env*
-node_modules/
+/node_modules
