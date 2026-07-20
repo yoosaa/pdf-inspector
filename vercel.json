@@ -6,7 +6,7 @@
     },
     "pdf_api": {
       "root": "apps/pdf-api",
-      "entrypoint": "main:app"
+      "entrypoint": "Dockerfile.vercel"
     }
   },
   "rewrites": [
