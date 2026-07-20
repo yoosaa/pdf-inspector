@@ -6,7 +6,11 @@
   "private": true,
   "scripts": {
     "dev:web": "pnpm --filter web dev",
-    "dev:api": "cd apps/pdf-api && .venv/bin/uvicorn main:app --reload --port 8000"
+    "dev:api": "cd apps/pdf-api && .venv/bin/uvicorn main:app --reload --port 8000",
+    "docker:build": "docker compose build pdf-api",
+    "docker:up": "docker compose up --build --detach pdf-api",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs --follow pdf-api"
   },
   "keywords": [],
   "author": "",

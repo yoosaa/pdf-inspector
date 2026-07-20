@@ -1,0 +1,12 @@
+services:
+  pdf-api:
+    image: pdf-inspector-api
+    build:
+      context: ./apps/pdf-api
+      dockerfile: Dockerfile.vercel
+    init: true
+    environment:
+      PORT: "8000"
+    ports:
+      - "${PDF_API_PORT:-8000}:8000"
+
