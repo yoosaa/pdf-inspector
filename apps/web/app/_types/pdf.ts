@@ -3,6 +3,9 @@ export type PdfAnalysisResult = {
   fileSize: number;
   pageCount: number;
   encrypted: boolean;
+  thumbnail: {
+    dataUrl: string | null;
+  };
   metadata: {
     title: string | null;
     author: string | null;

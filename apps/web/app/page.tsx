@@ -163,6 +163,22 @@ export default function Home() {
               </div>
             )}
 
+            {result.thumbnail.dataUrl && (
+              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h2 className="text-xl font-bold">先頭ページ</h2>
+
+                <div className="mt-4 flex justify-center rounded-xl bg-slate-100 p-6">
+                  {/* Data URLはNext/Imageの最適化対象にしないためimgを使用 */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={result.thumbnail.dataUrl}
+                    alt={`${result.filename}の先頭ページ`}
+                    className="max-h-[600px] max-w-full rounded border border-slate-300 bg-white shadow"
+                  />
+                </div>
+              </div>
+            )}
+
             <div className="grid gap-4 sm:grid-cols-3">
               <SummaryCard
                 label="ページ数"

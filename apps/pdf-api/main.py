@@ -1,4 +1,8 @@
 from io import BytesIO
+import base64
+import subprocess
+import tempfile
+from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,6 +12,52 @@ from pypdf.errors import PdfReadError
 
 MAX_FILE_SIZE = 4 * 1024 * 1024
 PREVIEW_MAX_LENGTH = 1000
+
+def create_first_page_thumbnail(pdf_bytes: bytes) -> str | None:
+    try:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            pdf_path = temp_path / "input.pdf"
+            output_prefix = temp_path / "thumbnail"
+
+            pdf_path.write_bytes(pdf_bytes)
+
+            subprocess.run(
+                [
+                    "pdftoppm",
+                    "-f",
+                    "1",
+                    "-singlefile",
+                    "-png",
+                    "-scale-to-x",
+                    "600",
+                    "-scale-to-y",
+                    "-1",
+                    str(pdf_path),
+                    str(output_prefix),
+                ],
+                check=True,
+                capture_output=True,
+                timeout=15,
+            )
+
+            thumbnail_path = temp_path / "thumbnail.png"
+
+            if not thumbnail_path.exists():
+                return None
+
+            encoded = base64.b64encode(
+                thumbnail_path.read_bytes()
+            ).decode("ascii")
+
+            return f"data:image/png;base64,{encoded}"
+
+    except (
+        subprocess.CalledProcessError,
+        subprocess.TimeoutExpired,
+        OSError,
+    ):
+        return None
 
 app = FastAPI(
     title="PDF Inspector API",
@@ -80,6 +130,9 @@ async def analyze_pdf(
                 "fileSize": len(file_bytes),
                 "pageCount": len(reader.pages),
                 "encrypted": True,
+                "thumbnail": {
+                    "dataUrl": None,
+                },
                 "metadata": {
                     "title": None,
                     "author": None,
@@ -123,11 +176,16 @@ async def analyze_pdf(
 
     preview = "\n\n".join(extracted_texts)[:PREVIEW_MAX_LENGTH]
 
+    thumbnail_data_url = create_first_page_thumbnail(file_bytes)
+
     return {
         "filename": file.filename or "unknown.pdf",
         "fileSize": len(file_bytes),
         "pageCount": len(reader.pages),
         "encrypted": False,
+        "thumbnail": {
+            "dataUrl": thumbnail_data_url,
+        },
         "metadata": {
             "title": metadata.title if metadata else None,
             "author": metadata.author if metadata else None,
